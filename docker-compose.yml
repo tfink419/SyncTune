@@ -1,0 +1,20 @@
+flask:
+  build: flask
+  volumes:
+    - ./src/python:/home
+  command: python /home/main.py
+  ports:
+    - "5000:5000"
+browserify:
+  build: browserify
+  volumes:
+    - ./src/jsx:/home/src
+    - ./dist:/home/dist
+  command: bash -c "cd /home && watchify --poll=true -v -t [ babelify --presets [ react es2015 ] ] src/main.jsx -o dist/bundle.js"
+static:
+  image: python:2.7.11
+  volumes:
+    - ./dist:/home
+  command: bash -c "cd /home && python -m SimpleHTTPServer"
+  ports:
+    - "8000:8000"
